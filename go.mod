@@ -1,4 +1,4 @@
-module rpasswd
+module github.com/joseluisq/rpasswd
 
 go 1.14
 

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"rpasswd/cmd"
+	"github.com/joseluisq/rpasswd/cmd"
 )
 
 func main() {
