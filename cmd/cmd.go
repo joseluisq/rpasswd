@@ -17,7 +17,7 @@ const (
 	// SYMBOLS contains default quantity of symbols available
 	SYMBOLS = 30
 	// LENGTH contains default characters length
-	LENGTH = 30
+	LENGTH = 40
 )
 
 // Execute adds all child commands to the root command and sets flags appropriately.
