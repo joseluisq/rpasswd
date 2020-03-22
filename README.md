@@ -107,6 +107,21 @@ OPTIONS:
    --help, -h                show help (default: false)
 ```
 
+## Encryption
+
+```sh
+enc -h
+NAME:
+   main enc - Encrypt a given password using a key derivation function hash.
+
+USAGE:
+   main enc [command options] <hash function>
+
+OPTIONS:
+   --hash value, -s value  key derivation function hash like bcrypt, scrypt, argon2 or pbkdf2 (default: "pbkdf2")
+   --help, -h              show help (default: false)
+```
+
 ## Contributions
 
 Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in current work by you, as defined in the Apache-2.0 license, shall be dual licensed as described below, without any additional terms or conditions.

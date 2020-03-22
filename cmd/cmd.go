@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"log"
 	"os"
@@ -9,6 +10,12 @@ import (
 
 	"github.com/sethvargo/go-password/password"
 	"github.com/urfave/cli/v2"
+	"golang.org/x/crypto/argon2"
+	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/crypto/pbkdf2"
+	"golang.org/x/crypto/scrypt"
+
+	"github.com/miquella/ask"
 )
 
 const (
@@ -18,6 +25,13 @@ const (
 	SYMBOLS = 30
 	// LENGTH contains default characters length
 	LENGTH = 40
+)
+
+const (
+	algoBcrypt = "bcrypt"
+	algoScrypt = "scrypt"
+	algoArgon2 = "argon2"
+	algoPbkdf2 = "pbkdf2"
 )
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -114,6 +128,20 @@ func Execute() {
 					},
 				},
 				Action: onGenerateSubCommand,
+			},
+			{
+				Name:      "enc",
+				Usage:     "Encrypt a given password using a key derivation function hash.",
+				ArgsUsage: "<hash function>",
+				Action:    onEncryptSubCommand,
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:    "hash",
+						Aliases: []string{"s"},
+						Value:   "pbkdf2",
+						Usage:   "key derivation function hash like bcrypt, scrypt, argon2 or pbkdf2",
+					},
+				},
 			},
 		},
 		Action: onGlobalCommand,
@@ -221,4 +249,62 @@ func onGenerateSubCommand(c *cli.Context) (err error) {
 	}
 
 	return nil
+}
+
+func onEncryptSubCommand(c *cli.Context) (err error) {
+	hash := c.String("hash")
+
+	if c.NArg() > 0 {
+		hash = c.Args().Get(0)
+	}
+
+	supportedHash := false
+
+	switch hash {
+	case algoBcrypt, algoScrypt, algoArgon2, algoPbkdf2:
+		supportedHash = true
+	}
+
+	if !supportedHash {
+		return fmt.Errorf("`%s` is not a supported key derivation function hash", hash)
+	}
+
+	stdinPass, err := ask.HiddenAsk("New secure password: ")
+
+	if err != nil {
+		return err
+	}
+
+	stdinSalt, err := ask.HiddenAsk("A random salt (at least 8 bytes): ")
+
+	if err != nil {
+		return err
+	}
+
+	passwdEnc := hashPassword(stdinPass, stdinSalt, hash)
+
+	fmt.Println("Password encrypted:")
+	fmt.Println(passwdEnc)
+
+	return nil
+}
+
+func hashPassword(passwd, salt, algo string) string {
+	var tmpPasswd []byte
+
+	switch algo {
+	case algoBcrypt:
+		tmpPasswd, _ = bcrypt.GenerateFromPassword([]byte(passwd), bcrypt.DefaultCost)
+		return string(tmpPasswd)
+	case algoScrypt:
+		tmpPasswd, _ = scrypt.Key([]byte(passwd), []byte(salt), 65536, 16, 2, 50)
+	case algoArgon2:
+		tmpPasswd = argon2.IDKey([]byte(passwd), []byte(salt), 2, 65536, 8, 50)
+	case algoPbkdf2:
+		fallthrough
+	default:
+		tmpPasswd = pbkdf2.Key([]byte(passwd), []byte(salt), 10000, 50, sha256.New)
+	}
+
+	return fmt.Sprintf("%x", tmpPasswd)
 }
