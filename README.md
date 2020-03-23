@@ -47,28 +47,28 @@ GLOBAL OPTIONS:
 
 ## Password generator
 
+### Custom mode
+
+```
+$ rpasswd --digits=0 --symbols=0 --quiet 40
+ODxJAeMtUhkWFgQBToRqIdviNaHlyCSzGKPpXwuY⏎
+
+$ rpasswd --digits=10 --symbols=0 --quiet 40
+0jg587sOf9VmndquiC3Gt2XvQYRKHZw6UN1BD4JT⏎
+
+$ rpasswd --digits=10 --symbols=10 --quiet 40
+2Oj.7h:0?FG8U%W&4k|QT1-mt[i3a<lVB69ps}5C⏎
+
+$ rpasswd --digits=10 --symbols=0 --repeat --quiet 40
+1XZ8lvkJ74al6zqqCek8ars2V0hgB9NzeriJb3YE⏎
+
+$ rpasswd --digits=10 --symbols=0 --repeat --quiet 64
+sbF2ZJre1bNfVOnwhWhXf1iJ5ly9IBTSyHMhLQH427p6Y5MEpodAJmyXKymipYlk⏎
+```
+
 ### Default mode
 
 Default mode enables lower-upper cases, digits and symbols characters by default.
-
-```
-$ rpasswd gen --quiet
-~}@3)&`?[]>/.#7^!:<=92",_\8{(+-16*%$|054⏎
-
-$ rpasswd gen --quiet 64
-#K!{Q.@\p?)3N+6:7<2xv8uV[O_ar"`w$}f1>G4=&0HT^],P~*/I-%(|Ce9i5JyE⏎
-
-$ rpasswd gen --symbols=false --quiet
-uPAZS1J0Qa69IDxUNq2i8E3CFo4Wv5jth7OfMseB⏎
-
-$ rpasswd gen --symbols=false --digits=false --quiet
-GREkMnyzTcVUIFCaOqsXembSPwrfAjHLJuBYDiZp⏎
-
-$ rpasswd gen --symbols=false --uppercase=false -q 36
-gfyihq8caomube3vz7n9k402dwts1px6l5jr⏎
-```
-
-### Custom mode
 
 ```
 $ rpasswd gen -h
@@ -92,20 +92,20 @@ OPTIONS:
 #### Usage
 
 ```
-$ rpasswd --digits=0 --symbols=0 --quiet 40
-ODxJAeMtUhkWFgQBToRqIdviNaHlyCSzGKPpXwuY⏎
+$ rpasswd gen --quiet
+~}@3)&`?[]>/.#7^!:<=92",_\8{(+-16*%$|054⏎
 
-$ rpasswd --digits=10 --symbols=0 --quiet 40
-0jg587sOf9VmndquiC3Gt2XvQYRKHZw6UN1BD4JT⏎
+$ rpasswd gen --quiet 64
+#K!{Q.@\p?)3N+6:7<2xv8uV[O_ar"`w$}f1>G4=&0HT^],P~*/I-%(|Ce9i5JyE⏎
 
-$ rpasswd --digits=10 --symbols=10 --quiet 40
-2Oj.7h:0?FG8U%W&4k|QT1-mt[i3a<lVB69ps}5C⏎
+$ rpasswd gen --symbols=false --quiet
+uPAZS1J0Qa69IDxUNq2i8E3CFo4Wv5jth7OfMseB⏎
 
-$ rpasswd --digits=10 --symbols=0 --repeat --quiet 40
-1XZ8lvkJ74al6zqqCek8ars2V0hgB9NzeriJb3YE⏎
+$ rpasswd gen --symbols=false --digits=false --quiet
+GREkMnyzTcVUIFCaOqsXembSPwrfAjHLJuBYDiZp⏎
 
-$ rpasswd --digits=10 --symbols=0 --repeat --quiet 64
-sbF2ZJre1bNfVOnwhWhXf1iJ5ly9IBTSyHMhLQH427p6Y5MEpodAJmyXKymipYlk⏎
+$ rpasswd gen --symbols=false --uppercase=false -q 36
+gfyihq8caomube3vz7n9k402dwts1px6l5jr⏎
 ```
 
 ## Encryption
