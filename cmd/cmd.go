@@ -38,8 +38,8 @@ const (
 func Execute() {
 	app := &cli.App{
 		Name:  "rPasswd",
-		Usage: "A secure random password generator tool",
-		Description: `CLI tool to generate passwords as described by AgileBits 1Password[1]. The algorithm is commonly used when generating website passwords.
+		Usage: "A small and secure password generator and encryptor tool",
+		Description: `CLI tool to generate secure passwords as described by AgileBits 1Password[1]. With support for password encryption as well using bcrypt, scrypt, argon2 or pbkdf2.
 
 		[1] https://discussions.agilebits.com/discussion/23842/how-random-are-the-generated-passwords`,
 		ArgsUsage: `rpasswd [global options] <length>
@@ -131,15 +131,15 @@ func Execute() {
 			},
 			{
 				Name:      "enc",
-				Usage:     "Encrypt a given password using a key derivation function hash.",
-				ArgsUsage: "<hash function>",
+				Usage:     "Encrypt a given password using a hashing function (bcrypt, scrypt) or a key derivation function hash (argon2, pbkdf2)",
+				ArgsUsage: "<algorithm>",
 				Action:    onEncryptSubCommand,
 				Flags: []cli.Flag{
 					&cli.StringFlag{
-						Name:    "hash",
-						Aliases: []string{"s"},
+						Name:    "algo",
+						Aliases: []string{"a"},
 						Value:   "pbkdf2",
-						Usage:   "key derivation function hash like bcrypt, scrypt, argon2 or pbkdf2",
+						Usage:   "crypto algorithm which can be bcrypt, scrypt, argon2 or pbkdf2",
 					},
 				},
 			},
@@ -252,21 +252,21 @@ func onGenerateSubCommand(c *cli.Context) (err error) {
 }
 
 func onEncryptSubCommand(c *cli.Context) (err error) {
-	hash := c.String("hash")
+	algo := c.String("algo")
 
 	if c.NArg() > 0 {
-		hash = c.Args().Get(0)
+		algo = c.Args().Get(0)
 	}
 
 	supportedHash := false
 
-	switch hash {
+	switch algo {
 	case algoBcrypt, algoScrypt, algoArgon2, algoPbkdf2:
 		supportedHash = true
 	}
 
 	if !supportedHash {
-		return fmt.Errorf("`%s` is not a supported key derivation function hash", hash)
+		return fmt.Errorf("`%s` is not a supported hash or key derivation function", algo)
 	}
 
 	stdinPass, err := ask.HiddenAsk("New secure password: ")
@@ -281,7 +281,7 @@ func onEncryptSubCommand(c *cli.Context) (err error) {
 		return err
 	}
 
-	passwdEnc := hashPassword(stdinPass, stdinSalt, hash)
+	passwdEnc := hashPassword(stdinPass, stdinSalt, algo)
 
 	fmt.Println("Password encrypted:")
 	fmt.Println(passwdEnc)
@@ -289,6 +289,7 @@ func onEncryptSubCommand(c *cli.Context) (err error) {
 	return nil
 }
 
+// borrowed from https://github.com/go-gitea/gitea/blob/master/models/user.go
 func hashPassword(passwd, salt, algo string) string {
 	var tmpPasswd []byte
 
