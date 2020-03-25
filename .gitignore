@@ -6,3 +6,4 @@ vendor
 *.log
 *.bin
 *passwd*
+**/.DS_Store

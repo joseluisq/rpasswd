@@ -62,17 +62,14 @@ lint:
 ########## Production tasks ###########
 #######################################
 
-prod.release.build:
+prod.release:
+	set -e
+	set -u
+
 	@go version
-	@env \
-		CGO_ENABLED=0 \
-		GOOS=$(PKG_TARGET) \
-		go build \
-			-ldflags="-s -w" \
-			-a -installsuffix cgo \
-			-o $(PKG_BIN)
-	@du -sh 
-.ONESHELL: prod.release.build
+	@git tag $(GIT_TAG)
+	@goreleaser release --rm-dist
+.ONESHELL: prod.release
 
 prod.release.ci:
 	set -e

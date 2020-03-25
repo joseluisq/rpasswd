@@ -2,7 +2,7 @@
 
 > A small and secure password generator and encryptor tool.
 
-CLI tool to [secure random passwords](https://golang.org/pkg/crypto/rand/) as described by [AgileBits 1Password](https://discussions.agilebits.com/discussion/23842/how-random-are-the-generated-passwords). With support for [password encryption](https://pkg.go.dev/golang.org/x/crypto) as well using bcrypt, scrypt, argon2 or pbkdf2. 
+**rPasswd** is a CLI tool to generate [secure random passwords](https://golang.org/pkg/crypto/rand/) as described by [AgileBits 1Password](https://discussions.agilebits.com/discussion/23842/how-random-are-the-generated-passwords). It also supports [password encryption](https://pkg.go.dev/golang.org/x/crypto) using hashing functions ([bcrypt](https://en.wikipedia.org/wiki/Bcrypt), [scrypt](https://en.wikipedia.org/wiki/Scrypt)) or key derivation hash functions ([argon2](https://github.com/p-h-c/phc-winner-argon2) or [pbkdf2](https://tools.ietf.org/html/rfc2898)).
 
 ## Install
 
@@ -18,7 +18,7 @@ Release binaries also available on [joseluisq/rpasswd/releases](https://github.c
 $ rpasswd -h
 
 NAME:
-   rPasswd - A small secure password generator and encryptor tool
+   rPasswd - A small and secure password generator and encryptor tool
 
 USAGE:
    rpasswd [global options] command [command options] rpasswd [global options] <length>
@@ -31,18 +31,14 @@ DESCRIPTION:
     [1] https://discussions.agilebits.com/discussion/23842/how-random-are-the-generated-passwords
 
 COMMANDS:
-   enc      Encrypt a given password using a hashing function (bcrypt, scrypt) or a key derivation function hash (argon2, pbkdf2)
-   gen      Generate a random password including lower-upper cases, digits and symbols characters by default.
-   help, h  Shows a list of commands or help for one command
+   gen, g    Generate a random password including lower-upper cases, digits and symbols characters by default
+   cgen, cg  Generate a custom random password with specified lower-upper cases, digits and symbols characters
+   enc       Encrypt a given password using a hashing function (bcrypt, scrypt) or a key derivation function hash (argon2, pbkdf2)
+   help, h   Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --digits value, -d value   quantity of digits (max. 10) (default: 0)
-   --length value, -l value   Password length (default: 40)
-   --quiet, -q                disallow verbose mode (default: false)
-   --repeat, -r               allow characters to repeat (default: false)
-   --symbols value, -s value  quantity of symbols (max. 30) (default: 0)
-   --uppercase, -u            allow upper and lower cases (default: true)
-   --help, -h                 show help (default: false)
+   --version, -v  shows the current version (default: false)
+   --help, -h     show help (default: false)
 ```
 
 ## Password generator
@@ -50,19 +46,40 @@ GLOBAL OPTIONS:
 ### Custom mode
 
 ```
-$ rpasswd --digits=0 --symbols=0 --quiet 40
+$ rpasswd cgen -h
+
+NAME:
+   rpasswd cgen - Generate a custom random password with specified lower-upper cases, digits and symbols characters
+
+USAGE:
+   rpasswd cgen [command options] <length>
+
+OPTIONS:
+   --length value, -l value   Password length (default: 40)
+   --digits value, -d value   quantity of digits (max. 10) (default: 0)
+   --symbols value, -s value  quantity of symbols (max. 30) (default: 0)
+   --uppercase, -u            allow upper and lower cases (default: true)
+   --repeat, -r               allow characters to repeat (default: false)
+   --quiet, -q                disallow verbose mode (default: false)
+   --help, -h                 show help (default: false)
+```
+
+#### Usage
+
+```
+$ rpasswd cgen --digits=0 --symbols=0 --quiet 40
 ODxJAeMtUhkWFgQBToRqIdviNaHlyCSzGKPpXwuY⏎
 
-$ rpasswd --digits=10 --symbols=0 --quiet 40
+$ rpasswd cgen --digits=10 --symbols=0 --quiet 40
 0jg587sOf9VmndquiC3Gt2XvQYRKHZw6UN1BD4JT⏎
 
-$ rpasswd --digits=10 --symbols=10 --quiet 40
+$ rpasswd cgen --digits=10 --symbols=10 --quiet 40
 2Oj.7h:0?FG8U%W&4k|QT1-mt[i3a<lVB69ps}5C⏎
 
-$ rpasswd --digits=10 --symbols=0 --repeat --quiet 40
+$ rpasswd cgen --digits=10 --symbols=0 --repeat --quiet 40
 1XZ8lvkJ74al6zqqCek8ars2V0hgB9NzeriJb3YE⏎
 
-$ rpasswd --digits=10 --symbols=0 --repeat --quiet 64
+$ rpasswd cgen --digits=10 --symbols=0 --repeat --quiet 64
 sbF2ZJre1bNfVOnwhWhXf1iJ5ly9IBTSyHMhLQH427p6Y5MEpodAJmyXKymipYlk⏎
 ```
 
@@ -74,7 +91,7 @@ Default mode enables lower-upper cases, digits and symbols characters by default
 $ rpasswd gen -h
 
 NAME:
-   rpasswd gen - Generate a random password including lower-upper cases, digits and symbols characters by default.
+   rpasswd gen - Generate a random password including lower-upper cases, digits and symbols characters by default
 
 USAGE:
    rpasswd gen [command options] <length>
@@ -104,8 +121,8 @@ uPAZS1J0Qa69IDxUNq2i8E3CFo4Wv5jth7OfMseB⏎
 $ rpasswd gen --symbols=false --digits=false --quiet
 GREkMnyzTcVUIFCaOqsXembSPwrfAjHLJuBYDiZp⏎
 
-$ rpasswd gen --symbols=false --uppercase=false -q 36
-gfyihq8caomube3vz7n9k402dwts1px6l5jr⏎
+$ rpasswd gen --symbols=false --uppercase=false --repeat --quiet 80
+bwcadcbvetfn6xaouuufqtngw0i2nvau0looiitcymmzddwxpqy4udxa09slh5pkxbbdwqb5pkjwz3cn⏎
 ```
 
 ## Encryption
